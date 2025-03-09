@@ -161,6 +161,35 @@ document.addEventListener('DOMContentLoaded', function() {
             .node[data-opacity] {
                 opacity: 1 !important;
             }
+            
+            .wrapper1 {
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            .font-header {
+                font-size: 24px !important;
+            }
+            
+            .node32 {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+            }
+            
+            .node33 {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .roundimage img {
+                max-width: 80px !important;
+                height: auto !important;
+            }
+            
+            .xs-scale-70 {
+                transform: scale(0.7);
+                transform-origin: left top;
+            }
         }
     `;
     document.head.appendChild(style);
