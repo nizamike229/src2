@@ -10,12 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 min-width: 320px !important;
             }
             
-            /* Фиксируем высоту шапки */
-            .node32.section-clear {
-                max-height: 300px !important;
-                overflow: hidden !important;
-            }
-            
             .container {
                 width: 100% !important;
                 padding: 0 15px;
@@ -35,59 +29,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 word-wrap: break-word;
             }
             
-            /* Уменьшаем масштаб в шапке */
             .xs-scale-60,
             .xs-scale-70 {
-                transform: scale(0.6) !important;
-                transform-origin: center top !important;
+                transform: none !important;
                 width: 100% !important;
-                margin-bottom: -20px !important;
             }
             
-            /* Уменьшаем кнопки в шапке */
-            .node32 .button-container .btn {
-                padding: 8px 15px !important;
-                font-size: 14px !important;
-                min-height: 0 !important;
-                line-height: 1.2 !important;
-                margin: 5px auto !important;
-            }
-            
-            /* Делаем карточки адаптивными */
-            .node[class*="node1"] {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 10px 0 !important;
-                transform: scale(0.9) !important;
-                transform-origin: center top !important;
-            }
-            
-            /* Специально для карточки NutriMax */
-            .node151 {
-                transform: scale(0.8) !important;
-                transform-origin: center top !important;
-                margin: 0 auto !important;
-                width: 90% !important;
-            }
-            
-            /* Уменьшаем изображения в карточках */
-            .node[class*="node1"] img {
-                max-width: 90% !important;
-                height: auto !important;
-                object-fit: contain !important;
-                margin: 0 auto !important;
-                display: block !important;
-            }
-            
-            /* Кнопка заказать */
             .button-container .btn {
-                width: auto !important;
-                max-width: 90% !important;
-                margin: 10px auto !important;
-                display: block !important;
-                padding: 8px 15px !important;
-                font-size: 16px !important;
-                white-space: normal !important;
+                width: 100%;
+                max-width: 300px;
+                margin: 10px auto;
+                display: block;
             }
             
             .grid .col {
@@ -115,14 +67,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .roundimage img {
-                max-width: 80% !important;
+                max-width: 100%;
                 height: auto;
                 margin: 0 auto;
             }
             
-            /* Уменьшаем заголовки */
             .font-header spans {
-                font-size: 22px !important;
+                font-size: 28px !important;
                 line-height: 1.2 !important;
                 text-align: center !important;
                 display: block;
@@ -141,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .padding {
-                height: 15px !important;
+                height: 20px !important;
             }
             
             .swiper-slide {
