@@ -2,17 +2,20 @@ document.addEventListener('DOMContentLoaded', function() {
     var style = document.createElement('style');
     style.textContent = `
         @media screen and (max-width: 768px) {
-            body {
+            html, body {
                 width: 100%;
                 margin: 0;
                 padding: 0;
+                overflow-x: hidden;
                 -webkit-text-size-adjust: 100%;
                 min-width: 320px !important;
+                height: auto !important;
+                position: relative;
             }
             
             .container {
                 width: 100% !important;
-                padding: 0 15px;
+                padding: 0 10px;
                 box-sizing: border-box;
                 margin: 0 auto;
                 min-width: 320px !important;
@@ -24,9 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .textable {
-                font-size: 16px !important;
+                font-size: 14px !important;
                 line-height: 1.4 !important;
-                word-wrap: break-word;
+                margin: 5px 0 !important;
             }
             
             .xs-scale-60,
@@ -42,12 +45,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .button-container .btn {
-                display: block !important;
-                width: 90% !important;
-                margin: 10px auto !important;
-                max-width: none !important;
-                padding: 12px !important;
-                font-size: 18px !important;
+                padding: 8px 15px !important;
+                font-size: 16px !important;
+                width: auto !important;
+                min-width: 200px;
+                max-width: 90% !important;
+                margin: 5px auto !important;
             }
             
             .col {
@@ -57,8 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .grid .col {
-                float: none !important;
-                clear: both !important;
+                padding: 5px !important;
+                margin-bottom: 10px !important;
             }
             
             .xs-none {
@@ -67,16 +70,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             .wrapper1,
             .wrapper2 {
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 0 !important;
-                min-width: 320px !important;
+                padding: 5px !important;
+                margin: 0 !important;
             }
             
             .node {
-                padding-left: 10px !important;
-                padding-right: 10px !important;
-                box-sizing: border-box;
+                transform: scale(0.9);
+                transform-origin: top center;
+                margin-bottom: 10px !important;
             }
             
             .roundimage {
@@ -84,20 +85,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .roundimage img {
-                max-width: 100%;
-                height: auto;
-                margin: 0 auto;
+                max-width: 60px !important;
+                height: auto !important;
             }
             
             .font-header spans {
-                font-size: 28px !important;
+                font-size: 24px !important;
                 line-height: 1.2 !important;
-                text-align: center !important;
-                display: block;
             }
             
             .spoiler43-container {
-                max-height: none !important;
+                padding: 5px !important;
             }
             
             .xs-force-center {
@@ -109,16 +107,104 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .padding {
-                height: 20px !important;
+                height: 10px !important;
             }
             
+            .swiper-container,
+            .swiper-wrapper,
             .swiper-slide {
+                height: auto !important;
+                min-height: 0 !important;
+            }
+            
+            .grid {
+                display: block !important;
+            }
+            
+            .gridwrap {
+                margin: 0 !important;
+                padding: 5px !important;
+            }
+            
+            [class*="col-"] {
+                width: 100% !important;
+            }
+            
+            .node[data-opacity] {
+                opacity: 1 !important;
+            }
+            
+            .wrapper1,
+            .wrapper2 {
+                height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
+            }
+            
+            .font-header {
+                font-size: 24px !important;
+            }
+            
+            .node32 {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+            }
+            
+            .node33 {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+            }
+            
+            .td.icon {
+                width: 30px !important;
+            }
+            
+            .area {
+                min-width: 320px !important;
+            }
+            
+            .swiper-container {
+                height: auto !important;
+            }
+            
+            .swiper-wrapper {
+                height: auto !important;
+            }
+            
+            .grid {
+                display: block !important;
+            }
+            
+            .gridwrap {
+                display: block !important;
+            }
+            
+            [class*="col-"] {
+                width: 100% !important;
+            }
+            
+            .node[data-opacity] {
+                opacity: 1 !important;
+            }
+            
+            .wrapper1 {
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            .node151 {
+                transform: scale(0.9);
+                transform-origin: top center;
+            }
+            
+            .section-clear.background-fixed {
+                position: relative !important;
                 height: auto !important;
             }
             
             ul {
-                padding-left: 20px !important;
-                margin: 10px 0 !important;
+                padding-left: 15px !important;
+                margin: 5px 0 !important;
             }
             
             .metahtml {
@@ -131,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .cont {
-                padding: 10px !important;
+                padding: 5px !important;
             }
             
             .area {
