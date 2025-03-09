@@ -35,6 +35,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 width: 100% !important;
             }
             
+            /* Уменьшаем кнопки в шапке */
+            .node32 .button-container .btn {
+                padding: 8px 15px !important;
+                font-size: 14px !important;
+                min-height: 0 !important;
+                line-height: 1.2 !important;
+                margin: 5px auto !important;
+            }
+            
+            /* Делаем карточки адаптивными */
+            .node[class*="node1"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 10px 0 !important;
+            }
+            
+            /* Уменьшаем изображения в карточках */
+            .node[class*="node1"] img {
+                max-width: 100% !important;
+                height: auto !important;
+                object-fit: contain !important;
+            }
+            
             .button-container .btn {
                 width: 100%;
                 max-width: 300px;
