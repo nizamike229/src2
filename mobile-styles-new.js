@@ -35,17 +35,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 width: 100% !important;
             }
             
+            .button-container {
+                display: block !important;
+                width: 100% !important;
+                margin: 10px 0 !important;
+            }
+            
             .button-container .btn {
-                width: 100%;
-                max-width: 300px;
-                margin: 10px auto;
-                display: block;
+                display: block !important;
+                width: 90% !important;
+                margin: 10px auto !important;
+                max-width: none !important;
+                padding: 12px !important;
+                font-size: 18px !important;
+            }
+            
+            .col {
+                width: 100% !important;
+                display: block !important;
+                margin-bottom: 20px !important;
             }
             
             .grid .col {
-                width: 100% !important;
-                margin-bottom: 20px;
-                float: none;
+                float: none !important;
+                clear: both !important;
+            }
+            
+            .xs-none {
+                display: block !important;
             }
             
             .wrapper1,
@@ -147,4 +164,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
+
+    // Перенаправляем все внешние ссылки на секцию контактов
+    document.querySelectorAll('a[href*="minternational.ru"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('.node node99').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Исправляем отображение карточки NutriMax
+    var nutrimaxCard = document.querySelector('.node151');
+    if (nutrimaxCard) {
+        nutrimaxCard.style.display = 'block';
+        nutrimaxCard.style.width = '100%';
+    }
 }); 
