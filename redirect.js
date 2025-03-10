@@ -111,20 +111,62 @@ document.addEventListener('DOMContentLoaded', function() {
         iframe.onload = function() {
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const iframeWin = iframe.contentWindow;
+
+                // Блокируем все возможные способы навигации
+                iframeWin.onbeforeunload = function(e) {
+                    e.preventDefault();
+                    window.location.href = returnUrl;
+                    return false;
+                };
+
+                // Перехватываем все клики
                 iframeDoc.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
                     window.location.href = returnUrl;
+                    return false;
                 }, true);
 
-                // Добавляем стили для отключения всех hover-эффектов в iframe
+                // Перехватываем отправку форм
+                iframeDoc.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = returnUrl;
+                    return false;
+                }, true);
+
+                // Блокируем программную навигацию
+                Object.defineProperty(iframeWin, 'location', {
+                    set: function() {
+                        window.location.href = returnUrl;
+                    }
+                });
+
+                // Перехватываем history API
+                iframeWin.history.pushState = function() {
+                    window.location.href = returnUrl;
+                };
+                iframeWin.history.replaceState = function() {
+                    window.location.href = returnUrl;
+                };
+
+                // Добавляем стили для отключения всех интерактивных элементов
                 const iframeStyles = iframeDoc.createElement('style');
                 iframeStyles.textContent = `
                     * {
                         pointer-events: none !important;
+                        user-select: none !important;
+                        -webkit-user-select: none !important;
+                        -moz-user-select: none !important;
+                        -ms-user-select: none !important;
                     }
                     html, body {
                         pointer-events: auto !important;
+                    }
+                    a, button, input, select, textarea {
+                        pointer-events: none !important;
+                        cursor: default !important;
                     }
                 `;
                 iframeDoc.head.appendChild(iframeStyles);
