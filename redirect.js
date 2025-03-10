@@ -4,14 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const myDomain = "src2.pages.dev";
     const returnUrl = "https://" + myDomain;
 
-    // Добавляем массив разрешенных URL для модального окна
-    const allowedModalUrls = [
-        'https://minternational.ru/kz/mimax',
-        'https://minternational.ru/kz/blumax',
-        'https://minternational.ru/kz/nutrimax',
-        'https://minternational.ru/kaliningrad/yekaterina'
-    ];
-
+    // Создаем стили для модального окна
     const styles = document.createElement('style');
     styles.textContent = `
         body.modal-open {
@@ -92,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(styles);
 
-    // Создаем модальное окно
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.innerHTML = `
@@ -107,92 +99,78 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.body.appendChild(modal);
 
-    // Функция открытия модального окна с ограниченным контентом
-    function openModalWithLimitedContent(url) {
+    function openModal() {
         document.body.classList.add('modal-open');
         modal.style.display = 'block';
-        
-        // Получаем iframe
         const iframe = modal.querySelector('iframe');
+        iframe.src = mainPageUrl;
         
-        // Устанавливаем стили для iframe напрямую
-        iframe.style.width = '100%';
-        iframe.style.height = '2000px'; // Фиксированная высота
-        iframe.style.maxHeight = '80vh'; // Или процент от высоты окна
-        iframe.style.border = 'none';
-        iframe.style.overflow = 'auto';
-        
-        // Создаем обертку для iframe с прокруткой
-        const iframeWrapper = document.createElement('div');
-        iframeWrapper.style.width = '100%';
-        iframeWrapper.style.height = '80vh';
-        iframeWrapper.style.maxHeight = '2000px';
-        iframeWrapper.style.overflow = 'auto';
-        iframeWrapper.style.position = 'relative';
-        
-        // Заменяем iframe на обертку с iframe внутри
-        const parent = iframe.parentNode;
-        parent.removeChild(iframe);
-        iframeWrapper.appendChild(iframe);
-        parent.appendChild(iframeWrapper);
-        
-        // Добавляем параметр к URL для скрытия хедера, если сайт поддерживает такую функцию
-        // Например, многие сайты поддерживают параметры вроде ?no_header=1 или ?embed=true
-        let modifiedUrl = url;
-        if (url.indexOf('?') > -1) {
-            modifiedUrl += '&no_header=1&embed=true&iframe=1';
-        } else {
-            modifiedUrl += '?no_header=1&embed=true&iframe=1';
-        }
-        
-        // Устанавливаем src для iframe
-        iframe.src = modifiedUrl;
-        
-        // Добавляем обработчик загрузки iframe
         iframe.onload = function() {
             try {
-                // Пытаемся получить доступ к содержимому iframe
-                // Это может не сработать из-за Same-Origin Policy
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                
-                // Если получили доступ, пытаемся скрыть хедер
-                if (iframeDoc) {
-                    const style = iframeDoc.createElement('style');
-                    style.textContent = `
-                        header, nav, .header, .nav, .navigation, 
-                        .top-header, .site-header, .main-header, 
-                        .page-header, #header, #nav, #navigation,
-                        [class*="header"], [id*="header"],
-                        [class*="nav"], [id*="nav"],
-                        .top-bar, .navbar, .navigation-wrapper {
-                            display: none !important;
-                        }
-                        body { padding-top: 0 !important; margin-top: 0 !important; }
-                    `;
-                    iframeDoc.head.appendChild(style);
-                }
-            } catch (e) {
-                console.log('Не удалось получить доступ к содержимому iframe:', e);
-                // Ничего не делаем, просто показываем iframe как есть
+                const iframeWin = iframe.contentWindow;
+
+                // Блокируем все возможные способы навигации
+                iframeWin.onbeforeunload = function(e) {
+                    e.preventDefault();
+                    window.location.href = returnUrl;
+                    return false;
+                };
+
+                // Перехватываем все клики
+                iframeDoc.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = returnUrl;
+                    return false;
+                }, true);
+
+                // Перехватываем отправку форм
+                iframeDoc.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = returnUrl;
+                    return false;
+                }, true);
+
+                // Блокируем программную навигацию
+                Object.defineProperty(iframeWin, 'location', {
+                    set: function() {
+                        window.location.href = returnUrl;
+                    }
+                });
+
+                // Перехватываем history API
+                iframeWin.history.pushState = function() {
+                    window.location.href = returnUrl;
+                };
+                iframeWin.history.replaceState = function() {
+                    window.location.href = returnUrl;
+                };
+
+                // Добавляем стили для отключения всех интерактивных элементов
+                const iframeStyles = iframeDoc.createElement('style');
+                iframeStyles.textContent = `
+                    * {
+                        pointer-events: none !important;
+                        user-select: none !important;
+                        -webkit-user-select: none !important;
+                        -moz-user-select: none !important;
+                        -ms-user-select: none !important;
+                    }
+                    html, body {
+                        pointer-events: auto !important;
+                    }
+                    a, button, input, select, textarea {
+                        pointer-events: none !important;
+                        cursor: default !important;
+                    }
+                `;
+                iframeDoc.head.appendChild(iframeStyles);
+            } catch(e) {
+                console.log('Failed to inject iframe handlers');
             }
         };
-        
-        // Добавляем кнопку закрытия поверх iframe
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Закрыть';
-        closeButton.style.position = 'absolute';
-        closeButton.style.top = '10px';
-        closeButton.style.right = '10px';
-        closeButton.style.zIndex = '9999';
-        closeButton.style.padding = '5px 10px';
-        closeButton.style.background = '#f44336';
-        closeButton.style.color = 'white';
-        closeButton.style.border = 'none';
-        closeButton.style.borderRadius = '3px';
-        closeButton.style.cursor = 'pointer';
-        closeButton.onclick = closeModal;
-        
-        iframeWrapper.appendChild(closeButton);
     }
 
     // Функция закрытия модального окна
@@ -202,10 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.querySelector('iframe').src = '';
     }
 
-    // Обработчик для кнопки "Назад"
     modal.querySelector('.modal-back').addEventListener('click', closeModal);
 
-    // Обработчик для ссылок
     document.body.addEventListener('click', function(e) {
         const link = e.target.closest('a');
         if (!link) return;
@@ -213,21 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const href = link.getAttribute('href');
         const text = link.textContent.trim().toLowerCase();
         
-        // Проверяем на главную страницу
         if (text === 'главная' || href === mainPageUrl) {
             e.preventDefault();
-            openModalWithLimitedContent(mainPageUrl);
+            openModal();
             return;
         }
         
-        // Проверяем на разрешенные URL для модального окна
-        if (allowedModalUrls.includes(href)) {
-            e.preventDefault();
-            openModalWithLimitedContent(href);
-            return;
-        }
-        
-        // Если модалка закрыта - все остальные переходы ведут на WhatsApp
         if (modal.style.display !== 'block') {
             e.preventDefault();
             window.location.href = whatsappUrl;
