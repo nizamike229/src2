@@ -119,34 +119,107 @@ document.addEventListener('DOMContentLoaded', function() {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 const iframeWin = iframe.contentWindow;
 
-                // Добавляем стили для скрытия хедера и ограничения контента
-                const iframeStyles = iframeDoc.createElement('style');
-                iframeStyles.textContent = `
-                    header, nav, .header, .nav, .navigation, 
-                    .top-header, .site-header, .main-header, 
-                    .page-header, #header, #nav, #navigation,
-                    [class*="header-"], [id*="header-"] {
-                        display: none !important;
-                        height: 0 !important;
-                        min-height: 0 !important;
-                        padding: 0 !important;
-                        margin: 0 !important;
+                // Функция применения стилей
+                function applyStyles() {
+                    const iframeStyles = iframeDoc.createElement('style');
+                    iframeStyles.textContent = `
+                        /* Скрываем все возможные хедеры */
+                        header, 
+                        nav, 
+                        .header,
+                        .nav,
+                        .navigation,
+                        .top-header,
+                        .site-header,
+                        .main-header,
+                        .page-header,
+                        #header,
+                        #nav,
+                        #navigation,
+                        [class*="header"],
+                        [id*="header"],
+                        [class*="nav"],
+                        [id*="nav"],
+                        .top-bar,
+                        .navbar,
+                        .navigation-wrapper {
+                            display: none !important;
+                            height: 0 !important;
+                            min-height: 0 !important;
+                            max-height: 0 !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            opacity: 0 !important;
+                            pointer-events: none !important;
+                            position: absolute !important;
+                            top: -9999px !important;
+                            left: -9999px !important;
+                        }
+                        
+                        /* Ограничиваем высоту и настраиваем прокрутку */
+                        html {
+                            max-height: 2000px !important;
+                            overflow: hidden !important;
+                        }
+                        
+                        body {
+                            max-height: 2000px !important;
+                            overflow-y: auto !important;
+                            padding-top: 0 !important;
+                            margin-top: 0 !important;
+                            position: relative !important;
+                        }
+                        
+                        /* Сбрасываем отступы для основного контента */
+                        main,
+                        .content,
+                        .main-content,
+                        .site-content,
+                        .page-content,
+                        article,
+                        .article,
+                        [class*="content"],
+                        [id*="content"] {
+                            margin-top: 0 !important;
+                            padding-top: 0 !important;
+                            position: relative !important;
+                            top: 0 !important;
+                        }
+                    `;
+                    
+                    // Удаляем старые стили если они есть
+                    const oldStyles = iframeDoc.querySelector('#modal-limitation-styles');
+                    if (oldStyles) {
+                        oldStyles.remove();
                     }
-                    body {
-                        max-height: 2000px !important;
-                        overflow-y: auto !important;
-                        padding-top: 0 !important;
-                        margin-top: 0 !important;
-                    }
-                    .content, .main-content, .site-content {
-                        margin-top: 0 !important;
-                        padding-top: 0 !important;
-                    }
-                    html {
-                        scroll-padding-top: 0 !important;
-                    }
-                `;
-                iframeDoc.head.appendChild(iframeStyles);
+                    
+                    iframeStyles.id = 'modal-limitation-styles';
+                    iframeDoc.head.appendChild(iframeStyles);
+                    
+                    // Принудительно скрываем хедер через DOM
+                    const possibleHeaders = iframeDoc.querySelectorAll('header, .header, nav, .nav, .navigation, [class*="header"], [id*="header"]');
+                    possibleHeaders.forEach(header => {
+                        header.style.display = 'none';
+                        header.style.height = '0';
+                        header.style.minHeight = '0';
+                        header.style.maxHeight = '0';
+                        header.style.opacity = '0';
+                        header.style.overflow = 'hidden';
+                    });
+                }
+
+                // Применяем стили сразу
+                applyStyles();
+
+                // Наблюдаем за изменениями в DOM и переприменяем стили
+                const observer = new MutationObserver(() => {
+                    applyStyles();
+                });
+
+                observer.observe(iframeDoc.body, {
+                    childList: true,
+                    subtree: true
+                });
 
                 // Блокируем навигацию
                 iframeWin.onbeforeunload = function(e) {
