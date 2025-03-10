@@ -279,4 +279,59 @@ body {
     transform: scale(0.98);
     transition: transform 0.1s ease;
   }
+}
+
+/* Стили для сверхмалых экранов */
+@media screen and (max-width: 320px) {
+  body {
+    font-size: 0.75em;
+    min-width: 240px;
+  }
+
+  h1, h2, h3, .font-header {
+    font-size: 1.1em !important;
+    line-height: 1.2 !important;
+    margin: 10px 0 !important;
+  }
+
+  .container, 
+  .wrapper1,
+  .wrapper2 {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+
+  .button-container .btn,
+  [id^="uid"] {
+    max-width: 240px !important;
+    padding: 8px 12px !important;
+    font-size: 0.8em !important;
+    min-height: 36px !important;
+  }
+
+  .textable {
+    font-size: 0.9em !important;
+    line-height: 1.3 !important;
+  }
+
+  .padding {
+    height: 15px !important;
+  }
+
+  .grid .col {
+    margin: 0 0 15px 0 !important;
+    padding: 0 10px !important;
+  }
+
+  /* Уменьшаем размер текста для кнопок и телефона */
+  .button-wrapper a.btn-legacy span.text {
+    font-size: 1em !important;
+  }
+
+  input, 
+  textarea,
+  select {
+    font-size: 0.9em !important;
+    padding: 8px !important;
+  }
 } 
