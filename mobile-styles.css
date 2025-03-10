@@ -37,14 +37,12 @@ body {
 
   /* Специальные стили для заголовка GreenMax */
   [style*="font-size: 48px"][style*="Oswald Regular"] {
-    font-size: 32px !important;
+    font-size: 24px !important;
     white-space: nowrap !important;
-    display: inline-block !important;
+    display: inline !important;
     text-align: center !important;
     width: auto !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    overflow: visible !important;
   }
 
   /* Контейнер для заголовка */
@@ -52,7 +50,8 @@ body {
   .xs-scale-60 {
     width: 100% !important;
     text-align: center !important;
-    overflow: hidden !important;
+    overflow: visible !important;
+    padding: 0 10px !important;
   }
 
   /* Контейнеры */
