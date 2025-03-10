@@ -218,6 +218,11 @@ body {
     font-size: 1em !important;
     padding: 10px !important;
   }
+
+  /* Увеличение размера текста для ссылки с номером телефона и именем Тони Старк */
+  .button-wrapper a.btn-legacy span.text {
+    font-size: 1.3em !important;
+  }
 }
 
 /* Дополнительные стили для очень маленьких экранов */
@@ -239,6 +244,11 @@ body {
   #node21_meta .navM {
     width: 100% !important;
     left: -100% !important;
+  }
+
+  /* Увеличение размера текста для ссылки с номером телефона и именем Тони Старк */
+  .button-wrapper a.btn-legacy span.text {
+    font-size: 1.2em !important;
   }
 }
 
