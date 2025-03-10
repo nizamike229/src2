@@ -4,11 +4,13 @@ const contactConfig = {
 };
 
 function updateContactInfo() {
-    const contactElement = document.querySelector('.button-wrapper .btn-legacy .text');
+    const contactElements = document.querySelectorAll('.textable.gray-theme p span strong');
     
-    if (contactElement) {
-        contactElement.innerHTML = `${contactConfig.name}<br>+${contactConfig.phone}`;
-    }
+    contactElements.forEach(element => {
+        if (element) {
+            element.textContent = `${contactConfig.name} ${contactConfig.phone}`;
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', updateContactInfo); 
