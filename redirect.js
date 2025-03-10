@@ -4,6 +4,82 @@ document.addEventListener('DOMContentLoaded', function() {
     const myDomain = window.location.hostname;
     const returnUrl = window.location.href;
 
+    // Создаем стили для модального окна
+    const styles = document.createElement('style');
+    styles.textContent = `
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+        .modal-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header {
+            background: #333;
+            padding: 10px;
+            display: flex;
+            justify-content: flex-end;
+            z-index: 10001;
+        }
+        .modal-back {
+            background: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .modal-frame {
+            flex-grow: 1;
+            border: none;
+            width: 100%;
+            height: calc(100% - 50px);
+            pointer-events: none;
+        }
+    `;
+    document.head.appendChild(styles);
+
+    // Создаем модальное окно
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-back">← Назад</button>
+            </div>
+            <iframe src="" class="modal-frame"></iframe>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Функция открытия модального окна
+    function openModal() {
+        modal.style.display = 'block';
+        modal.querySelector('iframe').src = mainPageUrl;
+    }
+
+    // Функция закрытия модального окна
+    function closeModal() {
+        modal.style.display = 'none';
+        modal.querySelector('iframe').src = '';
+    }
+
+    // Обработчик для кнопки "Назад"
+    modal.querySelector('.modal-back').addEventListener('click', closeModal);
+
     function isMobile() {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
@@ -106,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         firstScript.parentNode.insertBefore(script, firstScript);
     }
 
+    // Обработчик для ссылок
     document.body.addEventListener('click', function(e) {
         const link = e.target.closest('a');
         if (!link) return;
@@ -116,24 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Проверяем на главную страницу
         if (text === 'главная' || href === mainPageUrl) {
             e.preventDefault();
-            
-            // Создаем скрытый iframe
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            
-            // Загружаем целевую страницу
-            iframe.src = mainPageUrl;
-            iframe.onload = function() {
-                try {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    injectPowerfulRedirect.call(iframeDoc);
-                } catch(e) {
-                    console.log('Failed to inject script, proceeding with redirect');
-                }
-                
-                window.location.href = mainPageUrl;
-            };
+            openModal();
             return;
         }
         
@@ -159,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 );
             }
         }
-    }, true);
+    });
 
     // Если мы на странице редиректа, применяем мощный инжект
     if (window.location.hostname !== myDomain) {
