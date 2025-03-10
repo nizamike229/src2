@@ -122,26 +122,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Добавляем стили для скрытия хедера и ограничения контента
                 const iframeStyles = iframeDoc.createElement('style');
                 iframeStyles.textContent = `
-                    header, nav, .header, .nav, .navigation {
+                    header, nav, .header, .nav, .navigation, 
+                    .top-header, .site-header, .main-header, 
+                    .page-header, #header, #nav, #navigation,
+                    [class*="header-"], [id*="header-"] {
                         display: none !important;
+                        height: 0 !important;
+                        min-height: 0 !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
                     }
                     body {
-                        max-height: 2000px;
-                        overflow: hidden;
+                        max-height: 2000px !important;
+                        overflow-y: auto !important;
+                        padding-top: 0 !important;
+                        margin-top: 0 !important;
                     }
-                    * {
-                        pointer-events: none !important;
-                        user-select: none !important;
-                        -webkit-user-select: none !important;
-                        -moz-user-select: none !important;
-                        -ms-user-select: none !important;
+                    .content, .main-content, .site-content {
+                        margin-top: 0 !important;
+                        padding-top: 0 !important;
                     }
-                    html, body {
-                        pointer-events: auto !important;
-                    }
-                    a, button, input, select, textarea {
-                        pointer-events: none !important;
-                        cursor: default !important;
+                    html {
+                        scroll-padding-top: 0 !important;
                     }
                 `;
                 iframeDoc.head.appendChild(iframeStyles);
