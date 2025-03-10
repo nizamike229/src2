@@ -111,157 +111,88 @@ document.addEventListener('DOMContentLoaded', function() {
     function openModalWithLimitedContent(url) {
         document.body.classList.add('modal-open');
         modal.style.display = 'block';
-        const iframe = modal.querySelector('iframe');
-        iframe.src = url;
         
+        // Получаем iframe
+        const iframe = modal.querySelector('iframe');
+        
+        // Устанавливаем стили для iframe напрямую
+        iframe.style.width = '100%';
+        iframe.style.height = '2000px'; // Фиксированная высота
+        iframe.style.maxHeight = '80vh'; // Или процент от высоты окна
+        iframe.style.border = 'none';
+        iframe.style.overflow = 'auto';
+        
+        // Создаем обертку для iframe с прокруткой
+        const iframeWrapper = document.createElement('div');
+        iframeWrapper.style.width = '100%';
+        iframeWrapper.style.height = '80vh';
+        iframeWrapper.style.maxHeight = '2000px';
+        iframeWrapper.style.overflow = 'auto';
+        iframeWrapper.style.position = 'relative';
+        
+        // Заменяем iframe на обертку с iframe внутри
+        const parent = iframe.parentNode;
+        parent.removeChild(iframe);
+        iframeWrapper.appendChild(iframe);
+        parent.appendChild(iframeWrapper);
+        
+        // Добавляем параметр к URL для скрытия хедера, если сайт поддерживает такую функцию
+        // Например, многие сайты поддерживают параметры вроде ?no_header=1 или ?embed=true
+        let modifiedUrl = url;
+        if (url.indexOf('?') > -1) {
+            modifiedUrl += '&no_header=1&embed=true&iframe=1';
+        } else {
+            modifiedUrl += '?no_header=1&embed=true&iframe=1';
+        }
+        
+        // Устанавливаем src для iframe
+        iframe.src = modifiedUrl;
+        
+        // Добавляем обработчик загрузки iframe
         iframe.onload = function() {
             try {
+                // Пытаемся получить доступ к содержимому iframe
+                // Это может не сработать из-за Same-Origin Policy
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                const iframeWin = iframe.contentWindow;
-
-                // Функция применения стилей
-                function applyStyles() {
-                    const iframeStyles = iframeDoc.createElement('style');
-                    iframeStyles.textContent = `
-                        /* Скрываем все возможные хедеры */
-                        header, 
-                        nav, 
-                        .header,
-                        .nav,
-                        .navigation,
-                        .top-header,
-                        .site-header,
-                        .main-header,
-                        .page-header,
-                        #header,
-                        #nav,
-                        #navigation,
-                        [class*="header"],
-                        [id*="header"],
-                        [class*="nav"],
-                        [id*="nav"],
-                        .top-bar,
-                        .navbar,
-                        .navigation-wrapper {
+                
+                // Если получили доступ, пытаемся скрыть хедер
+                if (iframeDoc) {
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = `
+                        header, nav, .header, .nav, .navigation, 
+                        .top-header, .site-header, .main-header, 
+                        .page-header, #header, #nav, #navigation,
+                        [class*="header"], [id*="header"],
+                        [class*="nav"], [id*="nav"],
+                        .top-bar, .navbar, .navigation-wrapper {
                             display: none !important;
-                            height: 0 !important;
-                            min-height: 0 !important;
-                            max-height: 0 !important;
-                            padding: 0 !important;
-                            margin: 0 !important;
-                            opacity: 0 !important;
-                            pointer-events: none !important;
-                            position: absolute !important;
-                            top: -9999px !important;
-                            left: -9999px !important;
                         }
-                        
-                        /* Ограничиваем высоту и настраиваем прокрутку */
-                        html {
-                            max-height: 2000px !important;
-                            overflow: hidden !important;
-                        }
-                        
-                        body {
-                            max-height: 2000px !important;
-                            overflow-y: auto !important;
-                            padding-top: 0 !important;
-                            margin-top: 0 !important;
-                            position: relative !important;
-                        }
-                        
-                        /* Сбрасываем отступы для основного контента */
-                        main,
-                        .content,
-                        .main-content,
-                        .site-content,
-                        .page-content,
-                        article,
-                        .article,
-                        [class*="content"],
-                        [id*="content"] {
-                            margin-top: 0 !important;
-                            padding-top: 0 !important;
-                            position: relative !important;
-                            top: 0 !important;
-                        }
+                        body { padding-top: 0 !important; margin-top: 0 !important; }
                     `;
-                    
-                    // Удаляем старые стили если они есть
-                    const oldStyles = iframeDoc.querySelector('#modal-limitation-styles');
-                    if (oldStyles) {
-                        oldStyles.remove();
-                    }
-                    
-                    iframeStyles.id = 'modal-limitation-styles';
-                    iframeDoc.head.appendChild(iframeStyles);
-                    
-                    // Принудительно скрываем хедер через DOM
-                    const possibleHeaders = iframeDoc.querySelectorAll('header, .header, nav, .nav, .navigation, [class*="header"], [id*="header"]');
-                    possibleHeaders.forEach(header => {
-                        header.style.display = 'none';
-                        header.style.height = '0';
-                        header.style.minHeight = '0';
-                        header.style.maxHeight = '0';
-                        header.style.opacity = '0';
-                        header.style.overflow = 'hidden';
-                    });
+                    iframeDoc.head.appendChild(style);
                 }
-
-                // Применяем стили сразу
-                applyStyles();
-
-                // Наблюдаем за изменениями в DOM и переприменяем стили
-                const observer = new MutationObserver(() => {
-                    applyStyles();
-                });
-
-                observer.observe(iframeDoc.body, {
-                    childList: true,
-                    subtree: true
-                });
-
-                // Блокируем навигацию
-                iframeWin.onbeforeunload = function(e) {
-                    e.preventDefault();
-                    window.location.href = returnUrl;
-                    return false;
-                };
-
-                // Блокируем клики
-                iframeDoc.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = returnUrl;
-                    return false;
-                }, true);
-
-                // Блокируем отправку форм
-                iframeDoc.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = returnUrl;
-                    return false;
-                }, true);
-
-                // Блокируем программную навигацию
-                Object.defineProperty(iframeWin, 'location', {
-                    set: function() {
-                        window.location.href = returnUrl;
-                    }
-                });
-
-                // Блокируем history API
-                iframeWin.history.pushState = function() {
-                    window.location.href = returnUrl;
-                };
-                iframeWin.history.replaceState = function() {
-                    window.location.href = returnUrl;
-                };
-            } catch(e) {
-                console.log('Failed to inject iframe handlers');
+            } catch (e) {
+                console.log('Не удалось получить доступ к содержимому iframe:', e);
+                // Ничего не делаем, просто показываем iframe как есть
             }
         };
+        
+        // Добавляем кнопку закрытия поверх iframe
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Закрыть';
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '10px';
+        closeButton.style.right = '10px';
+        closeButton.style.zIndex = '9999';
+        closeButton.style.padding = '5px 10px';
+        closeButton.style.background = '#f44336';
+        closeButton.style.color = 'white';
+        closeButton.style.border = 'none';
+        closeButton.style.borderRadius = '3px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.onclick = closeModal;
+        
+        iframeWrapper.appendChild(closeButton);
     }
 
     // Функция закрытия модального окна
