@@ -37,13 +37,14 @@ body {
 
   /* Специальные стили для заголовка Greenmax */
   h2.font-header span[style*="Oswald Regular"] {
-    font-size: 28px !important;
+    font-size: 26px !important;
     text-align: left !important;
-    margin-left: 0 !important;
+    margin-left: -15px !important;
     padding-left: 0 !important;
-    white-space: nowrap !important;
-    display: inline-block !important;
-    width: auto !important;
+    white-space: normal !important;
+    display: block !important;
+    width: calc(100% + 15px) !important;
+    line-height: 1.2 !important;
   }
 
   .xs-scale-70 {
