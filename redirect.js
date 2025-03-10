@@ -15,45 +15,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
     }
-
-    function redirectWithMask(url) {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        const iframeWin = iframe.contentWindow;
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        iframeDoc.write(`
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <meta http-equiv="refresh" content="0;url=${url}">
-                </head>
-                <body></body>
-            </html>
-        `);
-        iframeDoc.close();
-        
-        setTimeout(() => {
-            document.body.removeChild(iframe);
-        }, 1000);
-    }
     
     document.body.addEventListener('click', function(e) {
         const link = e.target.closest('a');
         if (!link) return;
         
         const href = link.getAttribute('href');
-        if (!href) return;
-
-        if (href === mainPageUrl || (link.textContent && link.textContent.trim().toLowerCase() === 'главная')) {
+        const text = link.textContent.trim().toLowerCase();
+        
+        console.log('Clicked link:', { href, text }); // Отладочная информация
+        
+        // Проверяем на главную страницу
+        if (text === 'главная' || href === mainPageUrl) {
             e.preventDefault();
-            redirectWithMask(mainPageUrl);
+            console.log('Main page link detected, redirecting...'); // Отладочная информация
+            window.location.replace(mainPageUrl);
             return;
         }
         
-        if (href.includes('minternational') || href.includes('api.whatsapp') && href !== mainPageUrl) {
+        // Проверяем остальные ссылки
+        if ((href && href.includes('minternational')) || (href && href.includes('api.whatsapp'))) {
             e.preventDefault();
+            console.log('WhatsApp link detected, redirecting...'); // Отладочная информация
             
             if (isMobile()) {
                 setMobileViewport();
