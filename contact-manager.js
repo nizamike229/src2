@@ -13,4 +13,4 @@ function updateContactInfo() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', updateContactInfo); 
+document.addEventListener('DOMContentLoaded', updateContactInfo);
