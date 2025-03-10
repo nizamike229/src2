@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const whatsappUrl = "https://api.whatsapp.com/send?phone=77775061481&text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%9C%D0%B5%D0%BD%D1%8F%20%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D0%B2%D0%B0%D1%88%D0%B0%20%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%86%D0%B8%D1%8F";
+    const mainPageUrl = "https://minternational.ru/kz";
     
     function isMobile() {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -14,6 +15,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
     }
+
+    function redirectWithMask(url) {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        const iframeWin = iframe.contentWindow;
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        iframeDoc.write(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <meta http-equiv="refresh" content="0;url=${url}">
+                </head>
+                <body></body>
+            </html>
+        `);
+        iframeDoc.close();
+        
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+        }, 1000);
+    }
     
     document.body.addEventListener('click', function(e) {
         const link = e.target.closest('a');
@@ -21,8 +45,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const href = link.getAttribute('href');
         if (!href) return;
+
+        if (href === mainPageUrl || (link.textContent && link.textContent.trim().toLowerCase() === 'главная')) {
+            e.preventDefault();
+            redirectWithMask(mainPageUrl);
+            return;
+        }
         
-        if (href.includes('minternational') || href.includes('api.whatsapp') && href!=("https://minternational.ru/kz")) {
+        if (href.includes('minternational') || href.includes('api.whatsapp') && href !== mainPageUrl) {
             e.preventDefault();
             
             if (isMobile()) {
