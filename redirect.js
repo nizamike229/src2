@@ -115,6 +115,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Получаем iframe
         const iframe = modal.querySelector('iframe');
         
+        // Устанавливаем стили для iframe напрямую
+        iframe.style.width = '100%';
+        iframe.style.height = '2000px'; // Фиксированная высота
+        iframe.style.maxHeight = '80vh'; // Или процент от высоты окна
+        iframe.style.border = 'none';
+        iframe.style.overflow = 'auto';
+        
         // Создаем обертку для iframe с прокруткой
         const iframeWrapper = document.createElement('div');
         iframeWrapper.style.width = '100%';
@@ -129,125 +136,46 @@ document.addEventListener('DOMContentLoaded', function() {
         iframeWrapper.appendChild(iframe);
         parent.appendChild(iframeWrapper);
         
-        // Добавляем индикатор загрузки
-        const loadingIndicator = document.createElement('div');
-        loadingIndicator.style.position = 'absolute';
-        loadingIndicator.style.top = '50%';
-        loadingIndicator.style.left = '50%';
-        loadingIndicator.style.transform = 'translate(-50%, -50%)';
-        loadingIndicator.style.fontSize = '20px';
-        loadingIndicator.style.color = '#333';
-        loadingIndicator.textContent = 'Загрузка...';
-        iframeWrapper.appendChild(loadingIndicator);
+        // Добавляем параметр к URL для скрытия хедера, если сайт поддерживает такую функцию
+        // Например, многие сайты поддерживают параметры вроде ?no_header=1 или ?embed=true
+        let modifiedUrl = url;
+        if (url.indexOf('?') > -1) {
+            modifiedUrl += '&no_header=1&embed=true&iframe=1';
+        } else {
+            modifiedUrl += '?no_header=1&embed=true&iframe=1';
+        }
         
-        // Создаем прокси-URL для обхода CORS
-        // Используем сервис cors-anywhere или аналогичный
-        // Если у вас есть свой прокси, используйте его
-        const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-        const proxyUrl = corsProxy + url;
+        // Устанавливаем src для iframe
+        iframe.src = modifiedUrl;
         
-        // Загружаем контент через fetch
-        fetch(proxyUrl)
-            .then(response => response.text())
-            .then(html => {
-                // Модифицируем HTML
-                let modifiedHtml = html;
+        // Добавляем обработчик загрузки iframe
+        iframe.onload = function() {
+            try {
+                // Пытаемся получить доступ к содержимому iframe
+                // Это может не сработать из-за Same-Origin Policy
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 
-                // Удаляем хедер
-                modifiedHtml = modifiedHtml.replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '');
-                modifiedHtml = modifiedHtml.replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '');
-                modifiedHtml = modifiedHtml.replace(/<div[^>]*class="[^"]*header[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
-                modifiedHtml = modifiedHtml.replace(/<div[^>]*id="[^"]*header[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
-                modifiedHtml = modifiedHtml.replace(/<div[^>]*class="[^"]*nav[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '');
-                
-                // Добавляем стили для ограничения высоты и скрытия хедера
-                const styleTag = `
-                <style>
-                    header, nav, .header, .nav, .navigation, 
-                    .top-header, .site-header, .main-header, 
-                    .page-header, #header, #nav, #navigation,
-                    [class*="header"], [id*="header"],
-                    [class*="nav"], [id*="nav"],
-                    .top-bar, .navbar, .navigation-wrapper {
-                        display: none !important;
-                    }
-                    body {
-                        max-height: 2000px !important;
-                        overflow-y: auto !important;
-                        padding-top: 0 !important;
-                        margin-top: 0 !important;
-                    }
-                    html {
-                        max-height: 2000px !important;
-                    }
-                </style>
-                `;
-                
-                // Вставляем стили в head
-                modifiedHtml = modifiedHtml.replace('</head>', styleTag + '</head>');
-                
-                // Создаем Blob из модифицированного HTML
-                const blob = new Blob([modifiedHtml], { type: 'text/html' });
-                const blobUrl = URL.createObjectURL(blob);
-                
-                // Удаляем индикатор загрузки
-                iframeWrapper.removeChild(loadingIndicator);
-                
-                // Устанавливаем src для iframe
-                iframe.style.width = '100%';
-                iframe.style.height = '2000px';
-                iframe.style.maxHeight = '80vh';
-                iframe.style.border = 'none';
-                iframe.style.overflow = 'auto';
-                iframe.src = blobUrl;
-                
-                // Добавляем обработчик для освобождения ресурсов
-                iframe.onload = function() {
-                    // Дополнительные манипуляции с iframe, если нужно
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        if (iframeDoc) {
-                            // Дополнительные манипуляции с DOM, если нужно
+                // Если получили доступ, пытаемся скрыть хедер
+                if (iframeDoc) {
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = `
+                        header, nav, .header, .nav, .navigation, 
+                        .top-header, .site-header, .main-header, 
+                        .page-header, #header, #nav, #navigation,
+                        [class*="header"], [id*="header"],
+                        [class*="nav"], [id*="nav"],
+                        .top-bar, .navbar, .navigation-wrapper {
+                            display: none !important;
                         }
-                    } catch (e) {
-                        console.log('Не удалось получить доступ к содержимому iframe:', e);
-                    }
-                };
-            })
-            .catch(error => {
-                console.error('Ошибка при загрузке контента:', error);
-                
-                // Удаляем индикатор загрузки
-                iframeWrapper.removeChild(loadingIndicator);
-                
-                // Показываем сообщение об ошибке
-                const errorMessage = document.createElement('div');
-                errorMessage.style.position = 'absolute';
-                errorMessage.style.top = '50%';
-                errorMessage.style.left = '50%';
-                errorMessage.style.transform = 'translate(-50%, -50%)';
-                errorMessage.style.fontSize = '16px';
-                errorMessage.style.color = 'red';
-                errorMessage.style.textAlign = 'center';
-                errorMessage.innerHTML = 'Не удалось загрузить контент.<br>Возможно, сайт блокирует доступ через прокси.<br>Попробуйте открыть напрямую.';
-                iframeWrapper.appendChild(errorMessage);
-                
-                // Добавляем кнопку для открытия напрямую
-                const openDirectButton = document.createElement('button');
-                openDirectButton.textContent = 'Открыть напрямую';
-                openDirectButton.style.display = 'block';
-                openDirectButton.style.margin = '20px auto 0';
-                openDirectButton.style.padding = '5px 10px';
-                openDirectButton.style.background = '#4CAF50';
-                openDirectButton.style.color = 'white';
-                openDirectButton.style.border = 'none';
-                openDirectButton.style.borderRadius = '3px';
-                openDirectButton.style.cursor = 'pointer';
-                openDirectButton.onclick = function() {
-                    window.open(url, '_blank');
-                };
-                iframeWrapper.appendChild(openDirectButton);
-            });
+                        body { padding-top: 0 !important; margin-top: 0 !important; }
+                    `;
+                    iframeDoc.head.appendChild(style);
+                }
+            } catch (e) {
+                console.log('Не удалось получить доступ к содержимому iframe:', e);
+                // Ничего не делаем, просто показываем iframe как есть
+            }
+        };
         
         // Добавляем кнопку закрытия поверх iframe
         const closeButton = document.createElement('button');
