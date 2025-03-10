@@ -1,64 +1,241 @@
+/* Мобильные стили для сайта */
+
+/* Основные стили для мобильных устройств */
 @media screen and (max-width: 768px) {
+  /* Общие стили */
   body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
+    font-size: 16px;
+    line-height: 1.4;
     -webkit-text-size-adjust: 100%;
-  }
-  
-  .container {
-    width: 100% !important;
-    padding: 0 15px;
-    box-sizing: border-box;
-  }
-  
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .textable {
-    font-size: 16px !important;
-    line-height: 1.4 !important;
-  }
-  
-  .xs-scale-60,
-  .xs-scale-70 {
-    transform: none !important;
-  }
-  
-  .button-container .btn {
+    overflow-x: hidden;
     width: 100%;
-    max-width: 300px;
-    margin: 10px auto;
   }
-  
-  .grid .col {
-    width: 100% !important;
-    margin-bottom: 20px;
-  }
-  
+
+  /* Контейнеры */
+  .container, 
   .wrapper1,
   .wrapper2 {
     width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    box-sizing: border-box !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Контент */
+  .textable,
+  .node,
+  [class*="node"] {
+    width: 100% !important;
     max-width: 100% !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
-  
-  .node {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+
+  /* Текст */
+  .textable {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    text-align: left !important;
+    white-space: normal !important;
   }
-  
-  .roundimage img {
+
+  .textable p,
+  .textable span {
+    max-width: 100% !important;
+    white-space: normal !important;
+  }
+
+  h1, h2, h3, .font-header {
+    font-size: 22px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    margin: 15px 0 !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Изображения */
+  img {
     max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
   }
-  
-  .font-header spans {
-    font-size: 24px !important;
+
+  /* Кнопки */
+  .button-container .btn,
+  [id^="uid"] {
+    width: 100% !important;
+    max-width: 300px !important;
+    margin: 10px auto !important;
+    padding: 12px 20px !important;
+    font-size: 16px !important;
+    white-space: normal !important;
+    height: auto !important;
+    min-height: 44px !important;
   }
-  
-  .spoiler43-container {
-    max-height: none !important;
+
+  /* Сетка */
+  .grid {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .grid .col {
+    width: 100% !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 15px !important;
+    float: none !important;
+  }
+
+  /* Отступы */
+  .padding {
+    height: 20px !important;
+    clear: both !important;
+  }
+
+  /* Навигация */
+  #node21_meta .navM {
+    width: 80% !important;
+    left: -80% !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Слайдер */
+  #node60_meta .slider8-page {
+    width: 40px !important;
+    height: 40px !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Исправление отступов для вложенных элементов */
+  [class*="node"] [class*="wrapper"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Фиксы для inline стилей */
+  [style*="font-size"] {
+    font-size: 16px !important;
+  }
+
+  [style*="margin"],
+  [style*="padding"] {
+    margin: 5px 0 !important;
+    padding: 5px 0 !important;
+  }
+
+  /* Фикс для переполнения текста */
+  .xs-force-center {
+    text-align: center !important;
+    width: 100% !important;
+    display: block !important;
+  }
+
+  .xs-scale-60,
+  .xs-scale-70,
+  .xs-scale-80 {
+    transform: none !important;
+    width: 100% !important;
+  }
+
+  /* Навигация */
+  #node21_meta [id='nav-toggle']:checked ~ .navM {
+    left: 0 !important;
+  }
+
+  /* Табы */
+  #node75_meta .tabs1-page {
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    margin: 2px !important;
+  }
+
+  /* Спойлеры */
+  [id$="_meta"] .spoiler43-link {
+    font-size: 14px !important;
+    padding: 8px 0 !important;
+  }
+
+  /* Карточки */
+  [class*="node"] > .wrapper1 {
+    margin-bottom: 15px !important;
+  }
+
+  /* Отзывы */
+  #node89_meta .slider2-previous,
+  #node89_meta .slider2-next {
+    display: none !important;
+  }
+
+  #node89_meta .slider2-pagination {
+    margin: 0 !important;
+  }
+
+  /* Формы */
+  input, 
+  textarea,
+  select {
+    font-size: 16px !important;
+    padding: 10px !important;
+  }
+}
+
+/* Дополнительные стили для очень маленьких экранов */
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  h1, h2, h3, .font-header {
+    font-size: 20px !important;
+  }
+
+  .button-container .btn,
+  [id^="uid"] {
+    font-size: 14px !important;
+    padding: 10px 15px !important;
+  }
+
+  #node21_meta .navM {
+    width: 100% !important;
+    left: -100% !important;
+  }
+}
+
+/* Улучшения для планшетов */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    width: 95% !important;
+  }
+
+  .grid .col {
+    width: 48% !important;
+    margin: 1% !important;
+  }
+}
+
+/* Фиксы для высоких DPI экранов */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Анимации для мобильных устройств */
+@media (prefers-reduced-motion: no-preference) {
+  .button-container .btn:active,
+  [id^="uid"]:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
   }
 } 
