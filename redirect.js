@@ -201,10 +201,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Проверяем остальные ссылки
-        if ((href && href.includes('minternational')) || (href && href.includes('api.whatsapp'))) {
+        // Если модалка закрыта - все переходы ведут на WhatsApp
+        if (modal.style.display !== 'block') {
             e.preventDefault();
-            window.location.href = returnUrl;
+            window.location.href = whatsappUrl;
+            return;
         }
     });
 
