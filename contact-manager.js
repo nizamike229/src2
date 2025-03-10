@@ -1,14 +1,13 @@
-// Конфигурация контактных данных
 const contactConfig = {
     name: 'Майкл Джексон', 
     phone: '77776814389'
 };
 
 function updateContactInfo() {
-    const contactElement = document.querySelector('.sweet-alert ~ div strong');
+    const contactElement = document.querySelector('.button-wrapper .btn-legacy .text');
     
     if (contactElement) {
-        contactElement.textContent = `${contactConfig.name} ${contactConfig.phone}`;
+        contactElement.innerHTML = `${contactConfig.name}<br>+${contactConfig.phone}`;
     }
 }
 
