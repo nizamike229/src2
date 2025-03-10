@@ -4,7 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const myDomain = "src2.pages.dev";
     const returnUrl = "https://" + myDomain;
 
-    // Создаем стили для модального окна
+    // Добавляем массив разрешенных URL для модального окна
+    const allowedModalUrls = [
+        'https://minternational.ru/kz/mimax',
+        'https://minternational.ru/kz/blumax',
+        'https://minternational.ru/kz/nutrimax',
+        'https://minternational.ru/kaliningrad/yekaterina'
+    ];
+
     const styles = document.createElement('style');
     styles.textContent = `
         body.modal-open {
@@ -100,60 +107,28 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.body.appendChild(modal);
 
-    // Функция открытия модального окна
-    function openModal() {
+    // Функция открытия модального окна с ограниченным контентом
+    function openModalWithLimitedContent(url) {
         document.body.classList.add('modal-open');
         modal.style.display = 'block';
         const iframe = modal.querySelector('iframe');
-        iframe.src = mainPageUrl;
+        iframe.src = url;
         
-        // Добавляем обработчик для перехвата кликов в iframe
         iframe.onload = function() {
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 const iframeWin = iframe.contentWindow;
 
-                // Блокируем все возможные способы навигации
-                iframeWin.onbeforeunload = function(e) {
-                    e.preventDefault();
-                    window.location.href = returnUrl;
-                    return false;
-                };
-
-                // Перехватываем все клики
-                iframeDoc.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = returnUrl;
-                    return false;
-                }, true);
-
-                // Перехватываем отправку форм
-                iframeDoc.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = returnUrl;
-                    return false;
-                }, true);
-
-                // Блокируем программную навигацию
-                Object.defineProperty(iframeWin, 'location', {
-                    set: function() {
-                        window.location.href = returnUrl;
-                    }
-                });
-
-                // Перехватываем history API
-                iframeWin.history.pushState = function() {
-                    window.location.href = returnUrl;
-                };
-                iframeWin.history.replaceState = function() {
-                    window.location.href = returnUrl;
-                };
-
-                // Добавляем стили для отключения всех интерактивных элементов
+                // Добавляем стили для скрытия хедера и ограничения контента
                 const iframeStyles = iframeDoc.createElement('style');
                 iframeStyles.textContent = `
+                    header, nav, .header, .nav, .navigation {
+                        display: none !important;
+                    }
+                    body {
+                        max-height: 2000px;
+                        overflow: hidden;
+                    }
                     * {
                         pointer-events: none !important;
                         user-select: none !important;
@@ -170,6 +145,44 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 `;
                 iframeDoc.head.appendChild(iframeStyles);
+
+                // Блокируем навигацию
+                iframeWin.onbeforeunload = function(e) {
+                    e.preventDefault();
+                    window.location.href = returnUrl;
+                    return false;
+                };
+
+                // Блокируем клики
+                iframeDoc.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = returnUrl;
+                    return false;
+                }, true);
+
+                // Блокируем отправку форм
+                iframeDoc.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = returnUrl;
+                    return false;
+                }, true);
+
+                // Блокируем программную навигацию
+                Object.defineProperty(iframeWin, 'location', {
+                    set: function() {
+                        window.location.href = returnUrl;
+                    }
+                });
+
+                // Блокируем history API
+                iframeWin.history.pushState = function() {
+                    window.location.href = returnUrl;
+                };
+                iframeWin.history.replaceState = function() {
+                    window.location.href = returnUrl;
+                };
             } catch(e) {
                 console.log('Failed to inject iframe handlers');
             }
@@ -197,11 +210,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Проверяем на главную страницу
         if (text === 'главная' || href === mainPageUrl) {
             e.preventDefault();
-            openModal();
+            openModalWithLimitedContent(mainPageUrl);
             return;
         }
         
-        // Если модалка закрыта - все переходы ведут на WhatsApp
+        // Проверяем на разрешенные URL для модального окна
+        if (allowedModalUrls.includes(href)) {
+            e.preventDefault();
+            openModalWithLimitedContent(href);
+            return;
+        }
+        
+        // Если модалка закрыта - все остальные переходы ведут на WhatsApp
         if (modal.style.display !== 'block') {
             e.preventDefault();
             window.location.href = whatsappUrl;
