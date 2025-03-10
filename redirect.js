@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Создаем стили для модального окна
     const styles = document.createElement('style');
     styles.textContent = `
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -16,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             background: rgba(0, 0, 0, 0.7);
             z-index: 9999;
             display: none;
+            overflow: hidden;
         }
         .modal-content {
             position: fixed;
@@ -26,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             z-index: 10000;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
         .modal-header {
             background: #333;
@@ -33,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
             display: flex;
             justify-content: flex-end;
             z-index: 10001;
+            flex-shrink: 0;
         }
         .modal-back {
             background: #fff;
@@ -46,8 +55,10 @@ document.addEventListener('DOMContentLoaded', function() {
             flex-grow: 1;
             border: none;
             width: 100%;
-            height: calc(100% - 50px);
-            pointer-events: none;
+            height: 100%;
+            pointer-events: auto;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
         }
     `;
     document.head.appendChild(styles);
@@ -60,19 +71,21 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="modal-header">
                 <button class="modal-back">← Назад</button>
             </div>
-            <iframe src="" class="modal-frame"></iframe>
+            <iframe src="" class="modal-frame" scrolling="yes"></iframe>
         </div>
     `;
     document.body.appendChild(modal);
 
     // Функция открытия модального окна
     function openModal() {
+        document.body.classList.add('modal-open');
         modal.style.display = 'block';
         modal.querySelector('iframe').src = mainPageUrl;
     }
 
     // Функция закрытия модального окна
     function closeModal() {
+        document.body.classList.remove('modal-open');
         modal.style.display = 'none';
         modal.querySelector('iframe').src = '';
     }
