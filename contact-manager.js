@@ -5,13 +5,11 @@ const contactConfig = {
 };
 
 function updateContactInfo() {
-    const contactElements = document.querySelectorAll('.textable.gray-theme p span strong');
+    const contactElement = document.querySelector('.sweet-alert ~ div strong');
     
-    contactElements.forEach(element => {
-        if (element) {
-            element.textContent = `${contactConfig.name} ${contactConfig.phone}`;
-        }
-    });
+    if (contactElement) {
+        contactElement.textContent = `${contactConfig.name} ${contactConfig.phone}`;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', updateContactInfo); 
