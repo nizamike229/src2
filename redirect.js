@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const href = link.getAttribute('href');
         if (!href) return;
         
-        if (href.includes('minternational') || href.includes('api.whatsapp')) {
+        if (href.includes('minternational') || href.includes('api.whatsapp') && href!=("https://minternational.ru/kz")) {
             e.preventDefault();
             
             if (isMobile()) {
