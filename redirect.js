@@ -99,11 +99,11 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.body.appendChild(modal);
 
-    function openModal() {
+    function openModal(url = mainPageUrl) {
         document.body.classList.add('modal-open');
         modal.style.display = 'block';
         const iframe = modal.querySelector('iframe');
-        iframe.src = mainPageUrl;
+        iframe.src = url;
         
         iframe.onload = function() {
             try {
@@ -188,6 +188,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const href = link.getAttribute('href');
         const text = link.textContent.trim().toLowerCase();
+        
+        // Проверяем специальные URL для отзывов и фото
+        if (href === 'https://minternational.ru/reg_otzyvy' || href === 'https://minternational.ru/reg_foto') {
+            e.preventDefault();
+            openModal(href);
+            return;
+        }
         
         if (text === 'главная' || href === mainPageUrl) {
             e.preventDefault();
